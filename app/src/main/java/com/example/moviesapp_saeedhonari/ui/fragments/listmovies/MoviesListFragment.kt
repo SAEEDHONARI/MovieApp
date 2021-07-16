@@ -1,6 +1,7 @@
 package com.example.moviesapp_saeedhonari.ui.fragments.listmovies
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AbsListView
 import android.widget.Toast
@@ -27,7 +28,7 @@ class MoviesListFragment :  Fragment(R.layout.movies_list_fragment), MoviesAdapt
     var isLastPage = false
     var isScrolling = false
     val moviesAdapter = MoviesAdapter(this)
-    //var oldListMovies = mutableSetOf<Movie>()
+    var oldListMovies = mutableSetOf<Movie>()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -48,7 +49,7 @@ class MoviesListFragment :  Fragment(R.layout.movies_list_fragment), MoviesAdapt
             }
         }
 
-        viewModel.getMovies(SEARCH_TITLE).observe(viewLifecycleOwner) {
+        viewModel.getMoviesList(SEARCH_TITLE).observe(viewLifecycleOwner) {
             when {
                 it.status.isLoading() -> {
                     paginationProgressBar.visibility = View.VISIBLE
@@ -90,7 +91,7 @@ class MoviesListFragment :  Fragment(R.layout.movies_list_fragment), MoviesAdapt
             val totalVisibleItemCount = layoutManager.childCount
             val totalItemCount = layoutManager.itemCount
 
-         /*   val isNotLoadingAndNotLastPage = !isLoading && !isLastPage
+            val isNotLoadingAndNotLastPage = !isLoading && !isLastPage
             val isAtLastItem = firstVisibleItemPosition + totalVisibleItemCount >= totalItemCount
             val isNotAtBeginning = firstVisibleItemPosition >= 0
             val isTotalMoreThanVisible = totalItemCount >= QUERY_PAGE_SIZE
@@ -98,7 +99,7 @@ class MoviesListFragment :  Fragment(R.layout.movies_list_fragment), MoviesAdapt
                 isNotLoadingAndNotLastPage && isAtLastItem && isNotAtBeginning && isTotalMoreThanVisible && isScrolling
 
             if (shouldPaginate) {
-                viewModel.getNewsMovies(CATEGORY_NEWS).observe(viewLifecycleOwner) {
+                viewModel.getMoviesList(SEARCH_TITLE).observe(viewLifecycleOwner) {
                     when {
                         it.status.isLoading() -> {
                             paginationProgressBar.visibility = View.VISIBLE
@@ -108,7 +109,7 @@ class MoviesListFragment :  Fragment(R.layout.movies_list_fragment), MoviesAdapt
                             it.data?.let { MovieResponse ->
                                 paginationProgressBar.visibility = View.INVISIBLE
                                 oldListMovies.addAll(MovieResponse)
-                                Log.i("onScrolled",oldListMovies.toString() )
+                                Log.i("onScrolled", oldListMovies.toString())
                                 moviesAdapter.submitList(oldListMovies.toList())
                                 val totalPages = 100 / QUERY_PAGE_SIZE + 2
                                 isLastPage = viewModel.MoviePage == totalPages
@@ -121,10 +122,11 @@ class MoviesListFragment :  Fragment(R.layout.movies_list_fragment), MoviesAdapt
                             //ToastUtil.showCustomToast(this, it.errorMessage.toString())
                         }
                     }
-                }*/
+                }
                 isScrolling = false
             }
         }
+    }
 
     override fun onItemClick(movie: Movie) {
       /*  val action = MovieFragmentDirections.actionMovieFragment2ToDescriptionNewsFragment(Movie)
