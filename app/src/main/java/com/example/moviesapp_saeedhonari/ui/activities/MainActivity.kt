@@ -41,12 +41,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-   // private var doubleBackToExitPressedOnce = false
+   private var doubleBackToExitPressedOnce = false
     override fun onBackPressed() {
-    /*    //  val fragments = supportFragmentManager.backStackEntryCount
         val fragmentsID = movieNavHostFragment.findNavController().currentDestination?.getId()
 
-        if (fragmentsID!= R.id.descriptionNewsFragment) {
+        if (fragmentsID!= R.id.detailMovieFragment) {
             if (doubleBackToExitPressedOnce) {
                 finish()
             }
@@ -57,6 +56,6 @@ class MainActivity : AppCompatActivity() {
             }, 2000)
         }else{
             super.onBackPressed()
-        }*/
+        }
     }
 }

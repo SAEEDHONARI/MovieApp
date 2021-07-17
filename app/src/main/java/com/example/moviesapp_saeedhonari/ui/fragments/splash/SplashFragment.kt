@@ -31,7 +31,7 @@ class SplashFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         activityScope.launch {
-            delay(4000)
+            delay(1000)
             NavHostFragment.findNavController(this@SplashFragment)
                 .navigate(R.id.action_splashFragment_to_moviesListFragment)
         }

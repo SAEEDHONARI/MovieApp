@@ -7,6 +7,7 @@ import android.widget.AbsListView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -129,8 +130,27 @@ class MoviesListFragment :  Fragment(R.layout.movies_list_fragment), MoviesAdapt
     }
 
     override fun onItemClick(movie: Movie) {
-      /*  val action = MovieFragmentDirections.actionMovieFragment2ToDescriptionNewsFragment(Movie)
-        findNavController().navigate(action)*/
+
+        viewModel.getDetailMovie(movie.imdbID!!).observe(viewLifecycleOwner) {
+            when {
+                it.status.isLoading() -> {
+                    paginationProgressBar.visibility = View.VISIBLE
+                    isLoading = false
+                }
+                it.status.isSuccessful() -> {
+                    it.data?.let { DetailResponse ->
+                        paginationProgressBar.visibility = View.INVISIBLE
+                        val action = MoviesListFragmentDirections.actionMoviesListFragmentToDetailMovieFragment(DetailResponse)
+                        findNavController().navigate(action)
+                    }
+                }
+                it.status.isError() -> {
+                    //  if (it.errorMessage != null)
+                    //ToastUtil.showCustomToast(this, it.errorMessage.toString())
+                }
+            }
+        }
+
     }
 }
 

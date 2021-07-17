@@ -19,5 +19,19 @@
         android:id="@+id/moviesListFragment"
         android:name="com.example.moviesapp_saeedhonari.ui.fragments.listmovies.MoviesListFragment"
         android:label="movies_list_fragment"
-        tools:layout="@layout/movies_list_fragment" />
+        tools:layout="@layout/movies_list_fragment" >
+        <action
+            android:id="@+id/action_moviesListFragment_to_detailMovieFragment"
+            app:destination="@id/detailMovieFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailMovieFragment"
+        android:name="com.example.moviesapp_saeedhonari.ui.fragments.detail.DetailMovieFragment"
+        android:label="detail_movie_fragment"
+        tools:layout="@layout/detail_movie_fragment">
+        <argument
+            android:name="description"
+            app:argType="com.example.moviesapp_saeedhonari.data.model.DetailMovie" />
+
+    </fragment>
 </navigation>

@@ -99,6 +99,9 @@ dependencies {
 
     //Gif
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.17'
+
+    //FlexboxLayout
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
 }
 kapt {
     correctErrorTypes true

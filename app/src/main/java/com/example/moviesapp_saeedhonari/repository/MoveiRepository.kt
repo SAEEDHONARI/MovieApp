@@ -6,7 +6,9 @@ import com.example.moviesapp_saeedhonari.api.network.NetworkAndDBBoundResource
 import com.example.moviesapp_saeedhonari.api.network.NetworkResource
 import com.example.moviesapp_saeedhonari.api.network.Resource
 import com.example.moviesapp_saeedhonari.app.AppExecutors
-import com.example.moviesapp_saeedhonari.data.local.MoviewDao
+import com.example.moviesapp_saeedhonari.data.local.detail.DetailDao
+import com.example.moviesapp_saeedhonari.data.local.list.MovieDao
+import com.example.moviesapp_saeedhonari.data.model.DetailMovie
 import com.example.moviesapp_saeedhonari.data.model.ListMovies
 import com.example.moviesapp_saeedhonari.data.model.Movie
 import com.example.moviesapp_saeedhonari.data.remote.MovieApi
@@ -26,7 +28,8 @@ import javax.inject.Singleton
 
 @Singleton
 class MovieRepository @Inject constructor(
-    private val moviewDao: MoviewDao,
+    private val movieDao: MovieDao,
+    private val movieDetailDao: DetailDao,
     private val apiServices: MovieApi,
     @ApplicationContext val context: Context,
     private val appExecutors: AppExecutors = AppExecutors()
@@ -43,15 +46,15 @@ class MovieRepository @Inject constructor(
             override fun saveCallResult(item: ListMovies) {
                 if (item.search.isNotEmpty()) {
                     if(page==1)
-                    moviewDao.deleteAllMovies()
-                    moviewDao.insertMovies(item.search)
+                    movieDao.deleteAllMovies()
+                    movieDao.insertMovies(item.search)
                 }
             }
 
             override fun shouldFetch(data: List<Movie>?) =
                 (ConnectivityUtil.isConnected(context))
 
-            override fun loadFromDb() = moviewDao.getNewsMovies()
+            override fun loadFromDb() = movieDao.getNewsMovies()
 
             override fun createCall() =
                 apiServices.getMoviesList(data,SearchTitle,page)
@@ -60,7 +63,7 @@ class MovieRepository @Inject constructor(
     }
 
     /**
-     * Fetch the news Movies from database if exist else fetch from web
+     * Fetch the MoviesList from database if exist else fetch from web
      * and persist them in the database
      * LiveData<ReListMovies<ListMovies>>
      */
@@ -77,8 +80,54 @@ class MovieRepository @Inject constructor(
         }.asLiveData()
     }
 
+    /**
+     * Fetch the Detail of Movie from database if exist else fetch from web
+     * and persist them in the database
+     */
+    fun getDetailMovie(imdbID: String): LiveData<Resource<DetailMovie?>> {
+        val data = HashMap<String, String>()
+        data["apikey"] = API_KEY
+        return object : NetworkAndDBBoundResource<DetailMovie, DetailMovie>(appExecutors) {
+            override fun saveCallResult(item: DetailMovie) {
+                if (item.title!!.isNotEmpty()) {
+                    movieDetailDao.deleteDetailMovie(imdbID)
+                    movieDetailDao.insertDetailMovies(item)
+                }
+            }
+
+            override fun shouldFetch(data: DetailMovie?) =
+                (ConnectivityUtil.isConnected(context))
+
+            override fun loadFromDb() = movieDetailDao.getDetailMovie(imdbID)
+
+            override fun createCall() =
+                apiServices.getMovieDetail(data,imdbID)
+
+        }.asLiveData()
+    }
+
+    /**
+     * Fetch the news Movies from database if exist else fetch from web
+     * and persist them in the database
+     * LiveData<ReListMovies<ListMovies>>
+     */
+    fun getDetailMoviesFromServerOnly(SearchTitle: String):
+            LiveData<Resource<DetailMovie>> {
+
+        val data = HashMap<String, String>()
+        data["apikey"] = API_KEY
+        return object : NetworkResource<DetailMovie>() {
+            override fun createCall(): LiveData<Resource<DetailMovie>> {
+                return apiServices.getMovieDetail(data,SearchTitle)
+            }
+
+        }.asLiveData()
+    }
+
+    
+    
     fun CleareCache() {
-        moviewDao.deleteAllMovies()
+        movieDao.deleteAllMovies()
     }
 
 }

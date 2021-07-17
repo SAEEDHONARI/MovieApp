@@ -2,8 +2,9 @@ package com.example.moviesapp_saeedhonari.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.moviesapp_saeedhonari.data.local.MoviewDao
 import com.example.moviesapp_saeedhonari.data.local.MovieDatabase
+import com.example.moviesapp_saeedhonari.data.local.detail.DetailDao
+import com.example.moviesapp_saeedhonari.data.local.list.MovieDao
 import com.example.moviesapp_saeedhonari.data.remote.MovieApi
 import com.example.moviesapp_saeedhonari.data.remote.network.LiveDataCallAdapterFactoryForRetrofit
 import com.example.moviesapp_saeedhonari.util.BASE_URL
@@ -24,7 +25,7 @@ object AppModule {
      */
     @Singleton
     @Provides
-    fun provideNewsService(): MovieApi {
+    fun provideMoviesService(): MovieApi {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -40,7 +41,7 @@ object AppModule {
     @Singleton
     @Provides
     fun provideDb(@ApplicationContext context: Context): MovieDatabase =
-        Room.databaseBuilder(context, MovieDatabase::class.java, "news-db")
+        Room.databaseBuilder(context, MovieDatabase::class.java, "movies-db")
             .fallbackToDestructiveMigration().build()
 
 
@@ -49,7 +50,12 @@ object AppModule {
      */
     @Singleton
     @Provides
-    fun provideUserDao(db: MovieDatabase): MoviewDao = db.MoviesDao()
+    fun provideMoveiDao(db: MovieDatabase): MovieDao = db.MoviesDao()
+
+    @Singleton
+    @Provides
+    fun provideDetailDao(db: MovieDatabase): DetailDao = db.DetailDao()
+
 
 
 }
